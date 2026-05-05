@@ -1,5 +1,5 @@
 import { FC, useState, SyntheticEvent } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { useNavigate } from 'react-router-dom';
 import { ForgotPasswordUI } from '@ui-pages';
 import { forgotPassword } from '../../services/slices/userSlice';
@@ -8,9 +8,9 @@ import { AppDispatch } from '../../services/store';
 
 export const ForgotPassword: FC = () => {
   const [email, setEmail] = useState('');
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const error = useSelector(getUserError);
+  const error = useAppSelector(getUserError);
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();

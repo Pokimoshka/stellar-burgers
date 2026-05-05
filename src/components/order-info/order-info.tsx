@@ -1,41 +1,50 @@
-import { FC, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { FC, useEffect, useMemo } from 'react';
+import { useAppSelector } from '../../services/hooks';
+import { useParams, useLocation } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { getFeedOrders, getIngredients } from '@selectors';
+import {
+  getFeedOrders,
+  getUserOrders,
+  getCurrentOrder,
+  getIngredients
+} from '@selectors';
+import { useAppDispatch } from '../../services/hooks';
+import { fetchOrderByNumber } from '../../services/slices/feedSlice';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
-  const orders = useSelector(getFeedOrders);
-  const ingredients = useSelector(getIngredients);
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const isProfile = location.pathname.startsWith('/profile');
 
-  const orderData = orders.find((order) => order.number === Number(number)) || {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: '',
-    number: 0
-  };
+  const feedOrders = useAppSelector(getFeedOrders);
+  const userOrders = useAppSelector(getUserOrders);
+  const ingredients = useAppSelector(getIngredients);
+  const singleOrder = useAppSelector(getCurrentOrder);
+
+  const ordersSource = isProfile ? userOrders : feedOrders;
+  const orderData =
+    ordersSource.find((order) => order.number === Number(number)) ||
+    singleOrder;
+
+  useEffect(() => {
+    if (!orderData && number) {
+      dispatch(fetchOrderByNumber(Number(number)));
+    }
+  }, [orderData, number, dispatch]);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
     const date = new Date(orderData.createdAt);
 
-    type TIngredientsWithCount = {
-      [key: string]: (typeof ingredients)[0] & { count: number };
-    };
-
+    type TIngredientWithCount = (typeof ingredients)[0] & { count: number };
     const ingredientsInfo = orderData.ingredients.reduce(
-      (acc: TIngredientsWithCount, item: string) => {
+      (acc: Record<string, TIngredientWithCount>, item: string) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
-          if (ingredient) {
-            acc[item] = { ...ingredient, count: 1 };
-          }
+          if (ingredient) acc[item] = { ...ingredient, count: 1 };
         } else {
           acc[item].count++;
         }
@@ -45,7 +54,7 @@ export const OrderInfo: FC = () => {
     );
 
     const total = Object.values(ingredientsInfo).reduce(
-      (acc, item) => acc + item.price * item.count,
+      (sum, item) => sum + item.price * item.count,
       0
     );
 

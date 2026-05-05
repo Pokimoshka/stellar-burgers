@@ -1,25 +1,14 @@
 import { FC, useState, useRef, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../services/hooks';
 import { useInView } from 'react-intersection-observer';
 import { TTabMode } from '@utils-types';
 import { BurgerIngredientsUI } from '@ui';
-import { getIngredients } from '@selectors';
+import { getBuns, getMains, getSauces } from '@selectors';
 
 export const BurgerIngredients: FC = () => {
-  const ingredients = useSelector(getIngredients);
-
-  const buns = useMemo(
-    () => ingredients.filter((item) => item.type === 'bun'),
-    [ingredients]
-  );
-  const mains = useMemo(
-    () => ingredients.filter((item) => item.type === 'main'),
-    [ingredients]
-  );
-  const sauces = useMemo(
-    () => ingredients.filter((item) => item.type === 'sauce'),
-    [ingredients]
-  );
+  const buns = useAppSelector(getBuns);
+  const mains = useAppSelector(getMains);
+  const sauces = useAppSelector(getSauces);
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -38,12 +27,20 @@ export const BurgerIngredients: FC = () => {
 
   const onTabClick = (tab: string) => {
     setCurrentTab(tab as TTabMode);
-    const tabMap: { [key: string]: HTMLElement | null } = {
+    const container = document.getElementById('ingredients-content');
+    const targetMap: { [key: string]: HTMLElement | null } = {
       bun: titleBunRef.current,
       main: titleMainRef.current,
       sauce: titleSaucesRef.current
     };
-    tabMap[tab]?.scrollIntoView({ behavior: 'smooth' });
+    const target = targetMap[tab];
+    if (target && container) {
+      const yOffset =
+        target.getBoundingClientRect().top -
+        container.getBoundingClientRect().top +
+        container.scrollTop;
+      container.scrollTo({ top: yOffset, behavior: 'smooth' });
+    }
   };
 
   return (

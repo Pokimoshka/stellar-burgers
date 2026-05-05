@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../../services/hooks';
 import { useParams } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
@@ -7,7 +7,7 @@ import { getIngredients } from '@selectors';
 
 export const IngredientDetails: FC = () => {
   const { id } = useParams<{ id: string }>();
-  const ingredients = useSelector(getIngredients);
+  const ingredients = useAppSelector(getIngredients);
   const ingredientData = ingredients.find((item) => item._id === id) || null;
 
   if (!ingredientData) {

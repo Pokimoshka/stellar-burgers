@@ -1,4 +1,4 @@
-import { useSelector } from 'react-redux';
+import { useAppSelector } from '../services/hooks';
 import { Navigate, useLocation } from 'react-router-dom';
 import { getIsAuthChecked, getUser } from '@selectors';
 
@@ -7,8 +7,8 @@ type OnlyUnAuthRouteProps = {
 };
 
 export const OnlyUnAuthRoute = ({ element }: OnlyUnAuthRouteProps) => {
-  const isAuthChecked = useSelector(getIsAuthChecked);
-  const user = useSelector(getUser);
+  const isAuthChecked = useAppSelector(getIsAuthChecked);
+  const user = useAppSelector(getUser);
   const location = useLocation();
 
   if (!isAuthChecked) {

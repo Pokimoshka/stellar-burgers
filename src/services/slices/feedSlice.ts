@@ -1,19 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getFeedsApi, getOrdersApi } from '@api';
+import { getFeedsApi, getOrdersApi, getOrderByNumberApi } from '@api';
 import { TOrder } from '@utils-types';
 
 interface FeedState {
-  orders: TOrder[];
+  feedOrders: TOrder[];
+  userOrders: TOrder[];
   total: number;
   totalToday: number;
+  currentOrder: TOrder | null; // для прямого просмотра
   loading: boolean;
   error: string | null;
 }
 
 const initialState: FeedState = {
-  orders: [],
+  feedOrders: [],
+  userOrders: [],
   total: 0,
   totalToday: 0,
+  currentOrder: null,
   loading: false,
   error: null
 };
@@ -23,20 +27,29 @@ export const fetchUserOrders = createAsyncThunk(
   'feed/fetchUserOrders',
   getOrdersApi
 );
+export const fetchOrderByNumber = createAsyncThunk(
+  'feed/fetchOrder',
+  async (number: number) => {
+    const res = await getOrderByNumberApi(number);
+    return res.orders[0];
+  }
+);
 
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
-  reducers: {},
+  reducers: {
+    clearCurrentOrder: (state) => {
+      state.currentOrder = null;
+    }
+  },
   extraReducers: (builder) => {
-    // лента всех заказов
     builder
       .addCase(fetchFeeds.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchFeeds.fulfilled, (state, action) => {
-        state.orders = action.payload.orders;
+        state.feedOrders = action.payload.orders;
         state.total = action.payload.total;
         state.totalToday = action.payload.totalToday;
         state.loading = false;
@@ -45,22 +58,30 @@ const feedSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Ошибка загрузки ленты';
       })
-      // история заказов пользователя
       .addCase(fetchUserOrders.pending, (state) => {
         state.loading = true;
-        state.error = null;
       })
       .addCase(fetchUserOrders.fulfilled, (state, action) => {
-        state.orders = action.payload; // массив заказов
-        state.total = action.payload.length; // общее число – длина массива
-        state.totalToday = 0; // для истории не используется
+        state.userOrders = action.payload;
         state.loading = false;
       })
       .addCase(fetchUserOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Ошибка загрузки истории заказов';
+      })
+      .addCase(fetchOrderByNumber.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
+        state.currentOrder = action.payload;
+        state.loading = false;
+      })
+      .addCase(fetchOrderByNumber.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Ошибка загрузки заказа';
       });
   }
 });
 
+export const { clearCurrentOrder } = feedSlice.actions;
 export default feedSlice.reducer;

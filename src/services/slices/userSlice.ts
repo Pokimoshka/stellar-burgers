@@ -73,6 +73,7 @@ export const resetPassword = createAsyncThunk(
   'user/resetPassword',
   async (data: { password: string; token: string }) => {
     await resetPasswordApi(data);
+    localStorage.removeItem('resetPassword');
   }
 );
 
@@ -113,7 +114,7 @@ const userSlice = createSlice({
       // logout
       .addCase(logoutUser.fulfilled, (state) => {
         state.user = null;
-        state.isAuthChecked = false;
+        state.isAuthChecked = true;
       })
       // fetch user
       .addCase(fetchUser.pending, (state) => {
@@ -150,7 +151,6 @@ const userSlice = createSlice({
       })
       .addCase(forgotPassword.fulfilled, (state) => {
         state.loading = false;
-        localStorage.setItem('resetPassword', 'true');
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -163,7 +163,6 @@ const userSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.loading = false;
-        localStorage.removeItem('resetPassword');
       })
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = false;
