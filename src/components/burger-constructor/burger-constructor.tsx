@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { useNavigate } from 'react-router-dom';
 import { BurgerConstructorUI } from '@ui';
 import {
@@ -14,12 +14,12 @@ import { AppDispatch } from '../../services/store';
 import { TConstructorIngredient } from '@utils-types';
 
 export const BurgerConstructor: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const constructorItems = useSelector(getConstructorItems);
-  const user = useSelector(getUser);
-  const orderRequest = useSelector(getOrderLoading);
-  const orderModalData = useSelector(getCurrentOrder);
+  const constructorItems = useAppSelector(getConstructorItems);
+  const user = useAppSelector(getUser);
+  const orderRequest = useAppSelector(getOrderLoading);
+  const orderModalData = useAppSelector(getCurrentOrder);
 
   const onOrderClick = () => {
     if (!user) {

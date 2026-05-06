@@ -11,7 +11,8 @@ export const getConstructorBurger = (state: RootState) =>
 export const getConstructorItems = (state: RootState) =>
   state.constructorBurger;
 
-export const getCurrentOrder = (state: RootState) => state.orders.currentOrder;
+export const getOrderModalData = (state: RootState) =>
+  state.orders.currentOrder;
 export const getOrderLoading = (state: RootState) => state.orders.loading;
 export const getOrderError = (state: RootState) => state.orders.error;
 
@@ -26,5 +27,7 @@ export const getUser = (state: RootState) => state.user.user;
 export const getUserLoading = (state: RootState) => state.user.loading;
 export const getUserError = (state: RootState) => state.user.error;
 export const getIsAuthChecked = (state: RootState) => state.user.isAuthChecked;
+
+export const getCurrentOrder = (state: RootState) => state.feed.currentOrder;
 
 export { getBuns, getMains, getSauces } from './ingredients';

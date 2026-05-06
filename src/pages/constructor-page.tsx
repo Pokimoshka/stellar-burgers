@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../services/hooks';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BurgerIngredients, BurgerConstructor } from '@components';
@@ -9,10 +9,10 @@ import { getUser } from '@selectors';
 import { AppDispatch } from '../services/store';
 
 export const ConstructorPage = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const isLoading = useSelector(getIngredientsLoading);
-  const ingredients = useSelector(getIngredients);
-  const user = useSelector(getUser);
+  const dispatch = useAppDispatch();
+  const isLoading = useAppSelector(getIngredientsLoading);
+  const ingredients = useAppSelector(getIngredients);
+  const user = useAppSelector(getUser);
   const navigate = useNavigate();
 
   useEffect(() => {

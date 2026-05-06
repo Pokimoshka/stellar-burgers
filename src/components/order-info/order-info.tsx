@@ -1,6 +1,5 @@
 import { FC, useEffect, useMemo } from 'react';
-import { useAppSelector } from '../../services/hooks';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import {
@@ -9,12 +8,13 @@ import {
   getCurrentOrder,
   getIngredients
 } from '@selectors';
-import { useAppDispatch } from '../../services/hooks';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { fetchOrderByNumber } from '../../services/slices/feedSlice';
 
 export const OrderInfo: FC = () => {
   const { number } = useParams<{ number: string }>();
   const location = useLocation();
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isProfile = location.pathname.startsWith('/profile');
 
@@ -33,6 +33,12 @@ export const OrderInfo: FC = () => {
       dispatch(fetchOrderByNumber(Number(number)));
     }
   }, [orderData, number, dispatch]);
+
+  useEffect(() => {
+    if (location.state?.background) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, []);
 
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;

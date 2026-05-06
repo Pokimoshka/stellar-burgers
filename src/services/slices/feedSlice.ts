@@ -27,6 +27,7 @@ export const fetchUserOrders = createAsyncThunk(
   'feed/fetchUserOrders',
   getOrdersApi
 );
+
 export const fetchOrderByNumber = createAsyncThunk(
   'feed/fetchOrder',
   async (number: number) => {
@@ -71,6 +72,7 @@ const feedSlice = createSlice({
       })
       .addCase(fetchOrderByNumber.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
         state.currentOrder = action.payload;

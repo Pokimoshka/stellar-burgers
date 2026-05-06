@@ -1,3 +1,4 @@
+// src/components/app/app.tsx
 import { useEffect } from 'react';
 import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../services/hooks';
@@ -18,7 +19,6 @@ import { OnlyUnAuthRoute } from '../only-un-auth-route';
 import { Modal, IngredientDetails, OrderInfo } from '@components';
 import { fetchUser } from '../../services/slices/userSlice';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-import { AppDispatch } from '../../services/store';
 import styles from './app.module.css';
 
 const App = () => {

@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
 import { useNavigate } from 'react-router-dom';
 import { ConstructorPageUI } from '@ui-pages';
 import { Preloader } from '@ui';
@@ -9,11 +9,11 @@ import { getUser } from '@selectors';
 import { AppDispatch } from 'src/services/store';
 
 export const ConstructorPage: FC = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const isLoading = useSelector(getIngredientsLoading);
-  const ingredients = useSelector(getIngredients);
-  const user = useSelector(getUser);
+  const isLoading = useAppSelector(getIngredientsLoading);
+  const ingredients = useAppSelector(getIngredients);
+  const user = useAppSelector(getUser);
 
   useEffect(() => {
     dispatch(fetchIngredients());

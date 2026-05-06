@@ -4,7 +4,7 @@
   max-width: 600px;
   display: flex;
   flex-direction: column;
-  height: 100%;          /* вернём 100%, не flex:1 */
+  height: 100%; /* вернём 100%, не flex:1 */
 }
 
 p {
@@ -16,7 +16,7 @@ p {
 
 .content {
   /* убираем flex:1 и min-height */
-  height: calc(100vh - 250px);   /* ← подбери значение */
+  height: calc(100vh - 250px); /* ← подбери значение */
   overflow-y: scroll;
 }
 
