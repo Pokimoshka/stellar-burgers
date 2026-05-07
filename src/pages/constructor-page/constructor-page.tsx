@@ -1,20 +1,33 @@
-import { useSelector } from '../../services/store';
+import { FC, useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
+import { useNavigate } from 'react-router-dom';
+import { ConstructorPageUI } from '@ui-pages';
+import { Preloader } from '@ui';
+import { getIngredients, getIngredientsLoading } from '@selectors';
+import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { getUser } from '@selectors';
+import { AppDispatch } from 'src/services/store';
 
-import styles from './constructor-page.module.css';
+export const ConstructorPage: FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const isLoading = useAppSelector(getIngredientsLoading);
+  const ingredients = useAppSelector(getIngredients);
+  const user = useAppSelector(getUser);
 
-import { BurgerIngredients } from '../../components';
-import { BurgerConstructor } from '../../components';
-import { Preloader } from '../../components/ui';
-import { FC } from 'react';
+  useEffect(() => {
+    dispatch(fetchIngredients());
+  }, [dispatch]);
 
-export const ConstructorPage: FC = () => (
-  <main className={styles.containerMain}>
-    <h1 className={`${styles.title} text text_type_main-large mt-10 mb-5 pl-5`}>
-      Соберите бургер
-    </h1>
-    <div className={`${styles.main} pl-5 pr-5`}>
-      <BurgerIngredients />
-      <BurgerConstructor />
-    </div>
-  </main>
-);
+  const handleOrderClick = () => {
+    if (!user) {
+      navigate('/login', { state: { from: '/' } });
+    }
+  };
+
+  if (isLoading || !ingredients.length) {
+    return <Preloader />;
+  }
+
+  return <ConstructorPageUI isIngredientsLoading={isLoading} />;
+};

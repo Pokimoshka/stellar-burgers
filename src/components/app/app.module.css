@@ -6,6 +6,11 @@
   color: #f2f2f3;
 }
 
+.mainContent {
+  flex: 1;
+  overflow: hidden;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
 }

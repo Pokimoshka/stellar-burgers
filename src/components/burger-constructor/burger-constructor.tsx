@@ -1,24 +1,48 @@
 import { FC, useMemo } from 'react';
-import { TConstructorIngredient } from '@utils-types';
+import { useAppDispatch, useAppSelector } from '../../services/hooks';
+import { useNavigate } from 'react-router-dom';
 import { BurgerConstructorUI } from '@ui';
+import {
+  getConstructorItems,
+  getUser,
+  getCurrentOrder,
+  getOrderLoading
+} from '@selectors';
+import { createOrder, resetOrder } from '../../services/slices/ordersSlice';
+import { clearConstructor } from '../../services/slices/constructorSlice';
+import { AppDispatch } from '../../services/store';
+import { TConstructorIngredient } from '@utils-types';
 
 export const BurgerConstructor: FC = () => {
-  /** TODO: взять переменные constructorItems, orderRequest и orderModalData из стора */
-  const constructorItems = {
-    bun: {
-      price: 0
-    },
-    ingredients: []
-  };
-
-  const orderRequest = false;
-
-  const orderModalData = null;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const constructorItems = useAppSelector(getConstructorItems);
+  const user = useAppSelector(getUser);
+  const orderRequest = useAppSelector(getOrderLoading);
+  const orderModalData = useAppSelector(getCurrentOrder);
 
   const onOrderClick = () => {
+    if (!user) {
+      navigate('/login', { state: { from: '/' } });
+      return;
+    }
     if (!constructorItems.bun || orderRequest) return;
+    const ingredientIds = [
+      constructorItems.bun._id,
+      ...constructorItems.ingredients.map((item) => item._id),
+      constructorItems.bun._id
+    ];
+    dispatch(createOrder(ingredientIds))
+      .unwrap()
+      .then(() => {
+        dispatch(clearConstructor());
+      })
+      .catch(() => {});
   };
-  const closeOrderModal = () => {};
+
+  const closeOrderModal = () => {
+    dispatch(resetOrder());
+  };
 
   const price = useMemo(
     () =>
@@ -29,8 +53,6 @@ export const BurgerConstructor: FC = () => {
       ),
     [constructorItems]
   );
-
-  return null;
 
   return (
     <BurgerConstructorUI
