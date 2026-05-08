@@ -28,6 +28,6 @@ export const getUserLoading = (state: RootState) => state.user.loading;
 export const getUserError = (state: RootState) => state.user.error;
 export const getIsAuthChecked = (state: RootState) => state.user.isAuthChecked;
 
-export const getCurrentOrder = (state: RootState) => state.feed.currentOrder;
+export const getCurrentOrder = (state: RootState) => state.orders.currentOrder;
 
 export { getBuns, getMains, getSauces } from './ingredients';

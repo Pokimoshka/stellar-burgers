@@ -13,13 +13,6 @@ export const IngredientDetails: FC = () => {
   const ingredients = useAppSelector(getIngredients);
   const ingredientData = ingredients.find((item) => item._id === id) || null;
 
-  useEffect(() => {
-    if (location.state?.background) {
-      // Удаляем фоновое состояние, чтобы модальное окно не "застревало"
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, []);
-
   if (!ingredientData) {
     return <Preloader />;
   }

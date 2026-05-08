@@ -34,12 +34,6 @@ export const OrderInfo: FC = () => {
     }
   }, [orderData, number, dispatch]);
 
-  useEffect(() => {
-    if (location.state?.background) {
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, []);
-
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
